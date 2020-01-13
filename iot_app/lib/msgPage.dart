@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:mqtt_client/mqtt_client.dart' as mqtt;
 
-class WeatherPage extends StatefulWidget {
+class MsgPage extends StatefulWidget {
   @override
-  _WeatherPageState createState() => _WeatherPageState();
+  _MsgPageState createState() => _MsgPageState();
 }
 
 
-class _WeatherPageState extends State<WeatherPage> {
+class _MsgPageState extends State<MsgPage> {
   final formKey = GlobalKey<FormState>();
-  String _city;
+  String _msg;
   mqtt.MqttClient client;
 
   @override
@@ -30,18 +30,18 @@ class _WeatherPageState extends State<WeatherPage> {
             padding: EdgeInsets.all(8.0),
             child: TextFormField(
                     decoration: InputDecoration(
-                      labelText: "Enter the city",
+                      labelText: "Enter your message",
                     ),
                     validator: (input) =>
                         input.contains('@') ? 'Bad character' : null,
-                      onSaved: (input) => this._city = input,
+                      onSaved: (input) => this._msg = input,
                   ),
           ),
           Center(
             child: RaisedButton(
               child: Icon(Icons.send),
               onPressed: () {
-                _sendCity();
+                _sendMsg();
               }
             ),
           ),
@@ -70,15 +70,15 @@ class _WeatherPageState extends State<WeatherPage> {
     await client.connect();
   }
 
-  void _sendCity() {
+  void _sendMsg() {
     if (formKey.currentState.validate()) {
       setState(() {
         formKey.currentState.save();
       });
     }
-    const String pubTopic = 'home/vsullivan/meteo';
+    const String pubTopic = 'home/vsullivan/testI';
     final mqtt.MqttClientPayloadBuilder builder = mqtt.MqttClientPayloadBuilder();
-    builder.addString(_city);
+    builder.addString(this._msg);
     client.publishMessage(pubTopic, mqtt.MqttQos.exactlyOnce, builder.payload);
   }
 
