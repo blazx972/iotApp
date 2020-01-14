@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:iot_app/weatherPage.dart';
 import 'package:iot_app/ytPage.dart';
 import 'package:iot_app/msgPage.dart';
+import 'package:mqtt_client/mqtt_client.dart' as mqtt;
+
 
 void main() async => runApp(MyApp());
 
@@ -27,12 +29,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
-  static List<Widget> _widgetOptions = <Widget>[
-    MsgPage(),
-    YtPage(),
-    WeatherPage(),
-  ];
+  mqtt.MqttClient client;
 
   @override
   void initState() {
@@ -50,6 +47,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    initMqtt();
+    List<Widget> _widgetOptions = <Widget>[
+      MsgPage(client),
+      YtPage(client),
+      WeatherPage(client),
+    ];
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -79,5 +82,31 @@ class _MyHomePageState extends State<MyHomePage> {
         onTap: _onItemTapped,
       ),
     );
+  }
+
+  Future<void> initMqtt() async {
+    client = mqtt.MqttClient('broker.hivemq.com','iotUserApp');
+    client.port = 1883;
+    client.keepAlivePeriod = 20;
+    client.onDisconnected = onDisconnected;
+    client.secure = false;
+    client.logging(on: true);
+
+    final mqtt.MqttConnectMessage connMess = mqtt.MqttConnectMessage()
+      .withClientIdentifier('iotUserApp')
+      .withWillTopic('initTopic')
+      .withWillMessage('init')
+      .startClean()
+      .withWillQos(mqtt.MqttQos.atLeastOnce);
+    client.connectionMessage = connMess;
+
+    await client.connect();
+  }
+
+  void onDisconnected() {
+    print('EXAMPLE::OnDisconnected client callback - Client disconnection');
+    if (client.connectionStatus.returnCode == mqtt.MqttConnectReturnCode.solicited) {
+      print('EXAMPLE::OnDisconnected callback is solicited, this is correct');
+    }
   }
 }

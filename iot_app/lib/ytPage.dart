@@ -3,12 +3,17 @@ import 'dart:async';
 import 'package:mqtt_client/mqtt_client.dart' as mqtt;
 
 class YtPage extends StatefulWidget {
+  final mqtt.MqttClient client;
+  YtPage(this.client);
   @override
-  _YtPageState createState() => _YtPageState();
+  _YtPageState createState() => _YtPageState(client);
 }
 
 
 class _YtPageState extends State<YtPage> {
+  final mqtt.MqttClient clientParent;
+  _YtPageState(this.clientParent);
+
   final formKey = GlobalKey<FormState>();
   String _ytUsername;
   String _ytChannelId;
@@ -16,12 +21,12 @@ class _YtPageState extends State<YtPage> {
 
   @override
   void initState() {
+    client = clientParent;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    initMqtt();
     return Form(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -71,25 +76,6 @@ class _YtPageState extends State<YtPage> {
     );
   }
 
-  Future<void> initMqtt() async {
-    client = mqtt.MqttClient('broker.hivemq.com','iotUserApp');
-    client.port = 1883;
-    client.keepAlivePeriod = 20;
-    client.onDisconnected = onDisconnected;
-    client.secure = false;
-    client.logging(on: true);
-
-    final mqtt.MqttConnectMessage connMess = mqtt.MqttConnectMessage()
-      .withClientIdentifier('iotUserApp')
-      .withWillTopic('initTopic')
-      .withWillMessage('init')
-      .startClean()
-      .withWillQos(mqtt.MqttQos.atLeastOnce);
-    client.connectionMessage = connMess;
-
-    await client.connect();
-  }
-
   void _sendYoutubeUsername() {
     if (formKey.currentState.validate()) {
       setState(() {
@@ -112,12 +98,5 @@ class _YtPageState extends State<YtPage> {
     final mqtt.MqttClientPayloadBuilder builder = mqtt.MqttClientPayloadBuilder();
     builder.addString(_ytChannelId);
     client.publishMessage(pubTopic, mqtt.MqttQos.exactlyOnce, builder.payload);
-  }
-
-  void onDisconnected() {
-    print('EXAMPLE::OnDisconnected client callback - Client disconnection');
-    if (client.connectionStatus.returnCode == mqtt.MqttConnectReturnCode.solicited) {
-      print('EXAMPLE::OnDisconnected callback is solicited, this is correct');
-    }
   }
 }
