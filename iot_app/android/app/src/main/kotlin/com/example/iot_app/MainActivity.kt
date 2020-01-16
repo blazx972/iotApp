@@ -1,4 +1,4 @@
-package com.example.iot_app
+package com.company.iotek
 
 import android.os.Bundle
 

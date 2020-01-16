@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:mqtt_client/mqtt_client.dart' as mqtt;
+import 'package:iot_app/settingsMqtt.dart';
 
 class MsgPage extends StatefulWidget {
   final mqtt.MqttClient client;
@@ -62,6 +63,7 @@ class _MsgPageState extends State<MsgPage> {
         formKey.currentState.save();
       });
     }
+    getRouteMsg();
     const String pubTopic = 'home/vsullivan/testI';
     final mqtt.MqttClientPayloadBuilder builder = mqtt.MqttClientPayloadBuilder();
     builder.addString(this._msg);

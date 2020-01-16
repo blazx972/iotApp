@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "562960243359",
+    "firebase_url": "https://iotek-ed6ee.firebaseio.com",
+    "project_id": "iotek-ed6ee",
+    "storage_bucket": "iotek-ed6ee.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:562960243359:android:a2321b30fabc8b91de60aa",
+        "android_client_info": {
+          "package_name": "com.company.iotek"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "562960243359-okv83r53higl3j627sgiofar8tmp0fb6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCfH2k5T2c78nUeRd5bEPDQj4a9Pu5Q8ns"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "562960243359-okv83r53higl3j627sgiofar8tmp0fb6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

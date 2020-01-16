@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iot_app/settingsMqtt.dart';
 import 'package:iot_app/weatherPage.dart';
 import 'package:iot_app/ytPage.dart';
 import 'package:iot_app/msgPage.dart';
@@ -52,6 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
       MsgPage(client),
       YtPage(client),
       WeatherPage(client),
+      SettingMqtt(),
     ];
     return Scaffold(
       appBar: AppBar(
@@ -75,6 +77,10 @@ class _MyHomePageState extends State<MyHomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.cloud),
             title: Text('Meteo'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            title: Text('Settings'),
           ),
         ],
         currentIndex: _selectedIndex,
