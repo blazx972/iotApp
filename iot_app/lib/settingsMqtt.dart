@@ -15,6 +15,9 @@ class _SettingMqttState extends State<SettingMqtt> {
 
   final formKey = GlobalKey<FormState>();
   String _routeMsg;
+  String _routeWeather;
+  String _routeYtUsername;
+  String _routeYtChannelId;
 
   @override
   void initState() {
@@ -32,6 +35,7 @@ class _SettingMqttState extends State<SettingMqtt> {
             padding: EdgeInsets.all(8.0),
             child: TextFormField(
                     decoration: InputDecoration(
+                      border: OutlineInputBorder(),
                       labelText: "Change message route",
                     ),
                     validator: (input) =>
@@ -41,9 +45,69 @@ class _SettingMqttState extends State<SettingMqtt> {
           ),
           Center(
             child: RaisedButton(
-              child: Icon(Icons.send),
+              child: Icon(Icons.send, color: Colors.blue),
               onPressed: () {
                 updateMsgRoute(_routeMsg);
+              }
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: TextFormField(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: "Change meteo route",
+                    ),
+                    validator: (input) =>
+                        input.contains('@') ? 'Bad character' : null,
+                      onSaved: (input) => this._routeWeather = input,
+                  ),
+          ),
+          Center(
+            child: RaisedButton(
+              child: Icon(Icons.send, color: Colors.blue),
+              onPressed: () {
+                updateWeatherRoute(_routeWeather);
+              }
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: TextFormField(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: "Change youtube username route",
+                    ),
+                    validator: (input) =>
+                        input.contains('@') ? 'Bad character' : null,
+                      onSaved: (input) => this._routeYtUsername = input,
+                  ),
+          ),
+          Center(
+            child: RaisedButton(
+              child: Icon(Icons.send, color: Colors.blue),
+              onPressed: () {
+                updateYtUsernameRoute(_routeYtUsername);
+              }
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: TextFormField(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: "Change youtube channelId route",
+                    ),
+                    validator: (input) =>
+                        input.contains('@') ? 'Bad character' : null,
+                      onSaved: (input) => this._routeYtChannelId = input,
+                  ),
+          ),
+          Center(
+            child: RaisedButton(
+              child: Icon(Icons.send, color: Colors.blue),
+              onPressed: () {
+                updateYtChannelIdRoute(_routeYtChannelId);
               }
             ),
           ),
@@ -96,10 +160,4 @@ class _SettingMqttState extends State<SettingMqtt> {
       'ytchannelid': newRoute,
     });
   }
-}
-
-void getRouteMsg(){
-  databaseReference.once().then((DataSnapshot snapshot) {
-    print('Data : ${snapshot.value}');
-  });
 }

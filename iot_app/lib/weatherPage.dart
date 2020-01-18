@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
 import 'package:mqtt_client/mqtt_client.dart' as mqtt;
+import 'package:firebase_database/firebase_database.dart';
+
 
 class WeatherPage extends StatefulWidget {
   final mqtt.MqttClient client;
@@ -35,6 +36,7 @@ class _WeatherPageState extends State<WeatherPage> {
             padding: EdgeInsets.all(8.0),
             child: TextFormField(
                     decoration: InputDecoration(
+                      border: OutlineInputBorder(),
                       labelText: "Enter the city",
                     ),
                     validator: (input) =>
@@ -44,7 +46,7 @@ class _WeatherPageState extends State<WeatherPage> {
           ),
           Center(
             child: RaisedButton(
-              child: Icon(Icons.send),
+              child: Icon(Icons.send, color: Colors.blue),
               onPressed: () {
                 _sendCity();
               }
@@ -56,13 +58,14 @@ class _WeatherPageState extends State<WeatherPage> {
     );
   }
 
-  void _sendCity() {
+  void _sendCity() async {
     if (formKey.currentState.validate()) {
       setState(() {
         formKey.currentState.save();
       });
     }
-    const String pubTopic = 'home/vsullivan/meteo';
+    
+    String pubTopic = (await FirebaseDatabase.instance.reference().child("mqtt/weather").once()).value;
     final mqtt.MqttClientPayloadBuilder builder = mqtt.MqttClientPayloadBuilder();
     builder.addString(_city);
     client.publishMessage(pubTopic, mqtt.MqttQos.exactlyOnce, builder.payload);

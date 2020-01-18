@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
 import 'package:mqtt_client/mqtt_client.dart' as mqtt;
-import 'package:iot_app/settingsMqtt.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class MsgPage extends StatefulWidget {
   final mqtt.MqttClient client;
@@ -36,6 +35,7 @@ class _MsgPageState extends State<MsgPage> {
             padding: EdgeInsets.all(8.0),
             child: TextFormField(
                     decoration: InputDecoration(
+                      border: OutlineInputBorder(),
                       labelText: "Enter your message",
                     ),
                     validator: (input) =>
@@ -45,7 +45,7 @@ class _MsgPageState extends State<MsgPage> {
           ),
           Center(
             child: RaisedButton(
-              child: Icon(Icons.send),
+              child: Icon(Icons.send, color: Colors.blue),
               onPressed: () {
                 _sendMsg();
               }
@@ -57,14 +57,14 @@ class _MsgPageState extends State<MsgPage> {
     );
   }
 
-  void _sendMsg() {
+  void _sendMsg() async {
     if (formKey.currentState.validate()) {
       setState(() {
         formKey.currentState.save();
       });
     }
-    getRouteMsg();
-    const String pubTopic = 'home/vsullivan/testI';
+    
+    String pubTopic = (await FirebaseDatabase.instance.reference().child("mqtt/message").once()).value;
     final mqtt.MqttClientPayloadBuilder builder = mqtt.MqttClientPayloadBuilder();
     builder.addString(this._msg);
     client.publishMessage(pubTopic, mqtt.MqttQos.exactlyOnce, builder.payload);

@@ -57,14 +57,15 @@ class _MyHomePageState extends State<MyHomePage> {
     ];
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: new Center(child: new Text(widget.title, textAlign: TextAlign.center)),
       ),
-      body: Center(
+      body: SingleChildScrollView(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
 
       // Navigation bar
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.message),

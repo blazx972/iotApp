@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
 import 'package:mqtt_client/mqtt_client.dart' as mqtt;
+import 'package:firebase_database/firebase_database.dart';
 
 class YtPage extends StatefulWidget {
   final mqtt.MqttClient client;
@@ -36,6 +36,7 @@ class _YtPageState extends State<YtPage> {
             padding: EdgeInsets.all(8.0),
             child: TextFormField(
                     decoration: InputDecoration(
+                      border: OutlineInputBorder(),
                       labelText: "Enter youtuber channel",
                     ),
                     validator: (input) =>
@@ -45,7 +46,7 @@ class _YtPageState extends State<YtPage> {
           ),
           Center(
             child: RaisedButton(
-              child: Icon(Icons.send),
+              child: Icon(Icons.send, color: Colors.blue),
               onPressed: () {
                 _sendYoutubeUsername();
               }
@@ -55,6 +56,7 @@ class _YtPageState extends State<YtPage> {
             padding: EdgeInsets.all(8.0),
             child: TextFormField(
                     decoration: InputDecoration(
+                      border: OutlineInputBorder(),
                       labelText: "Or youtuber channel Id",
                     ),
                     validator: (input) =>
@@ -64,7 +66,7 @@ class _YtPageState extends State<YtPage> {
           ),
           Center(
             child: RaisedButton(
-              child: Icon(Icons.send),
+              child: Icon(Icons.send, color: Colors.blue),
               onPressed: () {
                 _sendYoutubeChannelId();
               }
@@ -76,25 +78,27 @@ class _YtPageState extends State<YtPage> {
     );
   }
 
-  void _sendYoutubeUsername() {
+  void _sendYoutubeUsername() async {
     if (formKey.currentState.validate()) {
       setState(() {
         formKey.currentState.save();
       });
     }
-    const String pubTopic = 'home/vsullivan/youtube/usersame';
+
+    String pubTopic = (await FirebaseDatabase.instance.reference().child("mqtt/ytusername").once()).value;
     final mqtt.MqttClientPayloadBuilder builder = mqtt.MqttClientPayloadBuilder();
     builder.addString(_ytUsername);
     client.publishMessage(pubTopic, mqtt.MqttQos.exactlyOnce, builder.payload);
   }
 
-  void _sendYoutubeChannelId() {
+  void _sendYoutubeChannelId() async {
     if (formKey.currentState.validate()) {
       setState(() {
         formKey.currentState.save();
       });
     }
-    const String pubTopic = 'home/vsullivan/youtube/channel_id';
+    
+    String pubTopic = (await FirebaseDatabase.instance.reference().child("mqtt/ytchannelid").once()).value;
     final mqtt.MqttClientPayloadBuilder builder = mqtt.MqttClientPayloadBuilder();
     builder.addString(_ytChannelId);
     client.publishMessage(pubTopic, mqtt.MqttQos.exactlyOnce, builder.payload);
